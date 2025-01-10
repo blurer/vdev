@@ -12,10 +12,25 @@ The following will be built:
 - Linux system tools: wget, curl, git
 
 ```bash
-git clone
+# 1. Clone your repo with the Dockerfile
+git clone https://github.com/blurer/vdev.git
 cd vdev
+
+# 2. Build the container image
 docker build -t devenv .
+
+# 3. Go to their actual project directory
+cd ~/projects/your-project/
+
+# 4. Run the dev container with their current directory mounted
+docker run -it \
+  -v "$(pwd):/workspace" \
+  -v "${HOME}/.kube:/root/.kube" \ #if you need k3s/k8s
+  --net=host \
+  --name devenv \
+  devenv
 ```
+
 
 Wait for the build to complete:
 
@@ -47,37 +62,6 @@ $ docker build -t devenv .
  => => unpacking to docker.io/library/devenv:latest          
  ```
 
-## Simplest way
+## Or just run it without any extras
 
 docker run -it devenv
-
-## Full development setup
-
-docker run -it \
-  -v "$(pwd):/workspace" \          # Mount current directory
-  -v "${HOME}/.kube:/root/.kube" \  # For kubectl config
-  --net=host \                      # For networking tools
-  --name devenv \                   # Give it a name
-  devenv
-
-## Step by step
-
-```bash
-# 1. Clone your repo with the Dockerfile
-git clone https://github.com/blurer/vdev.git
-cd vdev
-
-# 2. Build the container image
-docker build -t devenv .
-
-# 3. Go to their actual project directory
-cd ~/projects/your-project/
-
-# 4. Run the dev container with their current directory mounted
-docker run -it \
-  -v "$(pwd):/workspace" \
-  -v "${HOME}/.kube:/root/.kube" \ #if you need k3s/k8s
-  --net=host \
-  --name devenv \
-  devenv
-```
